@@ -1,0 +1,51 @@
+@using Examine.Providers
+@using Examine.SearchCriteria
+@using Skybrud.ExamineDevStuff
+
+@{
+
+    // Get a reference to the external searcher
+    BaseSearchProvider externalSearcher = ExamineManager.Instance.SearchProviderCollection["ExternalSearcher"];
+
+    // Create a new search criteria and set our query
+    ISearchCriteria criteria = externalSearcher.CreateSearchCriteria();
+    criteria = criteria.RawQuery("nodeTypeAlias:MyNodeAlias");
+
+    // Make the search in Examine
+    ISearchResults results = externalSearcher.Search(criteria);
+
+    foreach (SearchResult result in results) {
+
+        // Get a new IPublishedContent from the SearchResult
+        IPublishedContent content = new ExaminePublishedContent(result);
+
+        <h4 style="font-weight: bold; margin-top: 15px;">IPublishedContent</h4>
+        <pre>Id => @content.Id</pre>
+        <pre>Level => @content.Level</pre>
+        <pre>WriterId => @content.WriterId</pre>
+        <pre>CreatorId => @content.CreatorId</pre>
+        <pre>TemplateId => @content.TemplateId</pre>
+        <pre>SortOrder => @content.SortOrder</pre>
+        <pre>CreateDate => @content.CreateDate</pre>
+        <pre>UpdateDate => @content.UpdateDate</pre>
+        <pre>Name => @content.Name</pre>
+        <pre>UrlName => @content.UrlName</pre>
+        <pre>WriterName => @content.WriterName</pre>
+        <pre>CreatorName => @content.CreatorName</pre>
+        <pre>Path => @content.Path</pre>
+
+        <h4 style="font-weight: bold; margin-top: 15px;">Properties</h4>
+        foreach (var property in content.Properties) {
+            <pre>@property.PropertyTypeAlias => @property.Value</pre>
+        }
+
+        <h4 style="font-weight: bold; margin-top: 15px;">Fields</h4>
+        foreach (var field in result.Fields) {
+            <pre>@field.Key => @field.Value</pre>
+        }
+
+        break;
+
+    }
+
+}
